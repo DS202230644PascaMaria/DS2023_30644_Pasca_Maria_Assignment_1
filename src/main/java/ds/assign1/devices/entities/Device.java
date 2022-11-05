@@ -1,42 +1,36 @@
 package ds.assign1.devices.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.UUID;
 
+@Entity
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Device {
+
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Type(type = "uuid-binary")
     private UUID id;
+
     private String description;
     private String address;
-    private Long maxHourlyConsumption;
+    private float maxHourlyConsumption;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
+    public Device(String description, String address, float maxHourlyConsumption) {
         this.description = description;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
         this.address = address;
-    }
-
-    public Long getMaxHourlyConsumption() {
-        return maxHourlyConsumption;
-    }
-
-    public void setMaxHourlyConsumption(Long maxHourlyConsumption) {
         this.maxHourlyConsumption = maxHourlyConsumption;
     }
 }
