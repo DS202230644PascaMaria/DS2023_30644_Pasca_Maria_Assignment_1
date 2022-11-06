@@ -27,11 +27,6 @@ public class AccountService {
     public UUID createAccount(AccountDTO accountDTO, CredentialsDTO credentialsDTO){
         Account createdAccount = AccountBuilder.build(accountDTO, credentialsDTO);
 
-        System.out.println(createdAccount.getId() + " " +
-                            createdAccount.getName() + " " +
-                            createdAccount.getRole() + " " +
-                            createdAccount.getCredentials().getPassword() + " " +
-                            createdAccount.getCredentials().getUsername());
         createdAccount = accountRepo.save(createdAccount);
 
         LOGGER.debug("Account with id {} was created", createdAccount.getId());
