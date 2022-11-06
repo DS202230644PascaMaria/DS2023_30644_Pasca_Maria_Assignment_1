@@ -8,8 +8,8 @@
         <version>2.3.3.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>ro.tuc</groupId>
-    <artifactId>ds-2020</artifactId>
+    <groupId>ds.assign1</groupId>
+    <artifactId>assign1</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ds-2020</name>
     <description>Demo project for Spring Boot</description>

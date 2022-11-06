@@ -5,6 +5,7 @@ import ds.assign1.devices.dtos.DeviceDTO;
 import ds.assign1.devices.dtos.builders.DeviceBuilder;
 import ds.assign1.devices.entities.Device;
 import ds.assign1.devices.repos.DevicesRepo;
+import ds.assign1.user_devices.infrastructure.IDeviceService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DeviceService {
+public class DeviceService implements IDeviceService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceService.class);
 
     private final DevicesRepo devicesRepo;

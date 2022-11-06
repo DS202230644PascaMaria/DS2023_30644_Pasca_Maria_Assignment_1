@@ -7,6 +7,7 @@ import ds.assign1.accounts.dtos.builders.CredentialsBuilder;
 import ds.assign1.accounts.entities.Account;
 import ds.assign1.accounts.entities.Credentials;
 import ds.assign1.accounts.repos.AccountRepo;
+import ds.assign1.user_devices.infrastructure.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class AccountService implements IAccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
     private final AccountRepo accountRepo;
 
