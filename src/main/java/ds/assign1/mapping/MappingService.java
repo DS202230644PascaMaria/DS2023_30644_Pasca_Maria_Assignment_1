@@ -42,6 +42,12 @@ public class MappingService {
 
     public void insertDevice(UUID accountId, UUID deviceId){
         // validators
+        if(ACCOUNT_SERVICE.getOwnedDevices(accountId).contains(deviceId)){
+            throw new RuntimeException("The user already owns the device");
+        }
+        if(DEVICE_SERVICE.getOwner(deviceId) != null){
+            throw new RuntimeException("Device owned by another user");
+        }
 
         ACCOUNT_SERVICE.insertDevice(accountId, deviceId);
         DEVICE_SERVICE.addOwner(accountId, deviceId);
@@ -49,6 +55,12 @@ public class MappingService {
 
     public void removeDevice(UUID accountId, UUID deviceId){
         // validators
+        if(!ACCOUNT_SERVICE.getOwnedDevices(accountId).contains(deviceId)){
+            throw new RuntimeException("The user doesn't own this device");
+        }
+        if(!DEVICE_SERVICE.getOwner(deviceId).equals(accountId)){
+            throw new RuntimeException("Device owned by another user");
+        }
 
         ACCOUNT_SERVICE.removeDevice(accountId, deviceId);
         DEVICE_SERVICE.removeOwner(deviceId);
