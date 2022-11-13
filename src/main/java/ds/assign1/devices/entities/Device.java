@@ -28,9 +28,12 @@ public class Device {
     private String address;
     private float maxHourlyConsumption;
 
-    public Device(String description, String address, float maxHourlyConsumption) {
+    private UUID pairedAccountId;
+
+    public Device(String description, String address, float maxHourlyConsumption, UUID pairedAccountId) {
         this.description = description;
         this.address = address;
         this.maxHourlyConsumption = maxHourlyConsumption;
+        this.pairedAccountId = pairedAccountId;
     }
 }

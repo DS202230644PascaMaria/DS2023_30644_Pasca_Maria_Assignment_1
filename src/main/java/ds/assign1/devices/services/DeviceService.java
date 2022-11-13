@@ -5,6 +5,7 @@ import ds.assign1.devices.dtos.DeviceDTO;
 import ds.assign1.devices.dtos.builders.DeviceBuilder;
 import ds.assign1.devices.entities.Device;
 import ds.assign1.devices.repos.DevicesRepo;
+import ds.assign1.mapping.infrastructure.IDeviceService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +13,12 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DeviceService {
+public class DeviceService implements IDeviceService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceService.class);
 
     private final DevicesRepo devicesRepo;
@@ -64,5 +64,33 @@ public class DeviceService {
 
         devicesRepo.delete(deleteDevice);
         return idToDelete;
+    }
+
+    public void addOwner(UUID accountId, UUID deviceId){
+        Device device = devicesRepo.findById(deviceId).orElseThrow(() -> {
+            throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + deviceId);
+        });
+
+        DeviceDTO dto = DeviceBuilder.build(device);
+
+        dto.setPairedAccountId(accountId);
+        devicesRepo.save(DeviceBuilder.build(deviceId, dto));
+    }
+
+    public void removeOwner(UUID deviceId){
+        Device device = devicesRepo.findById(deviceId).orElseThrow(() -> {
+            throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + deviceId);
+        });
+
+        DeviceDTO dto = DeviceBuilder.build(device);
+
+        dto.setPairedAccountId(null);
+        devicesRepo.save(DeviceBuilder.build(deviceId, dto));
+    }
+
+    public UUID getOwner(UUID deviceId){
+        return devicesRepo.findById(deviceId).orElseThrow(() -> {
+            throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + deviceId);
+        }).getPairedAccountId();
     }
 }

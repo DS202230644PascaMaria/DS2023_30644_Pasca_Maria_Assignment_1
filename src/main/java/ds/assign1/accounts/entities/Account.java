@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -29,10 +30,15 @@ public class Account {
 
     private Credentials credentials;
 
-    public Account(String name, RoleType role, Credentials credentials) {
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "paired_devices", joinColumns = @JoinColumn(name = "account_id"))
+    private List<UUID> deviceList;
+
+    public Account(String name, RoleType role, Credentials credentials, List<UUID> deviceList) {
         this.name = name;
         this.role = role;
         this.credentials = credentials;
+        this.deviceList = deviceList;
     }
 
     public void setId(UUID id){
