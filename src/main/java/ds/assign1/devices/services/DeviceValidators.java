@@ -2,11 +2,13 @@ package ds.assign1.devices.services;
 
 import ds.assign1.devices.repos.DevicesRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
 @RequiredArgsConstructor
 public class DeviceValidators {
     private final DevicesRepo REPO;

@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.regex.*;
 import ds.assign1.accounts.repos.AccountRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class AccountValidators {
     private final AccountRepo REPO;
@@ -22,7 +24,7 @@ public class AccountValidators {
     }
 
     public void passwordValidator(String password){
-        Pattern p = Pattern.compile(" ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Pattern p = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher m = p.matcher(password);
         if(!m.matches()){
             throw new IllegalArgumentException("Password doesn't follow the wanted form");
