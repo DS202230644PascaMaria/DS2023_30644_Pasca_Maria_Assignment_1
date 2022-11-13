@@ -26,7 +26,14 @@ public class AccountService implements ILoginService, IAccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
     private final AccountRepo accountRepo;
 
+    private final AccountValidators VALIDATORS;
+
     public UUID createAccount(AccountDTO accountDTO, CredentialsDTO credentialsDTO){
+        VALIDATORS.usernameValidators(credentialsDTO.getUsername());
+        VALIDATORS.passwordValidator(credentialsDTO.getPassword());
+
+        VALIDATORS.nameValidator(accountDTO.getName());
+
         Account createdAccount = AccountBuilder.build(accountDTO, credentialsDTO);
 
         createdAccount = accountRepo.save(createdAccount);
@@ -56,15 +63,16 @@ public class AccountService implements ILoginService, IAccountService {
         });
 
         AccountDTO updatedAccount = AccountBuilder.build(account);
-        System.out.println(updatedAccount.getId() + " " +
-                            updatedAccount.getName());
 
+        VALIDATORS.nameValidator(dto.getName());
 
-        if(!dto.getName().isEmpty()){
+        if(dto.getName().length() != 0){
             updatedAccount.setName(dto.getName());
         }
 
-        updatedAccount.setRole(dto.getRole());
+        if(dto.getRole() != null){
+            updatedAccount.setRole(dto.getRole());
+        }
 
         accountRepo.save(AccountBuilder.build(updatedAccount.getId(), updatedAccount, account.getCredentials()));
 
@@ -72,16 +80,19 @@ public class AccountService implements ILoginService, IAccountService {
     }
 
     public UUID updateCredentials(UUID idToUpdate, CredentialsDTO dto){
+        VALIDATORS.usernameValidators(dto.getUsername());
+        VALIDATORS.passwordValidator(dto.getPassword());
+
         Account account = accountRepo.findById(idToUpdate).orElseThrow(() -> {
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToUpdate);
         });
 
         AccountDTO updatedAccount = AccountBuilder.build(account);
-        System.out.println(updatedAccount.getId());
+
         Credentials updatedCredentials = CredentialsBuilder.build(dto);
 
         Account toSave = AccountBuilder.build(updatedAccount.getId(), updatedAccount, updatedCredentials);
-        System.out.println(toSave.getId());
+
         accountRepo.save(toSave);
 
         return updatedAccount.getId();
