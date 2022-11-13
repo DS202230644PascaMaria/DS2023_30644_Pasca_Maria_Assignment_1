@@ -7,6 +7,7 @@ import ds.assign1.accounts.dtos.builders.CredentialsBuilder;
 import ds.assign1.accounts.entities.Account;
 import ds.assign1.accounts.entities.Credentials;
 import ds.assign1.accounts.repos.AccountRepo;
+import ds.assign1.login.infrastructure.ILoginService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class AccountService implements ILoginService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
     private final AccountRepo accountRepo;
 
@@ -93,5 +94,24 @@ public class AccountService {
         accountRepo.delete(account);
 
         return account.getId();
+    }
+
+    @Override
+    public UUID findAccountByUsername(String username) {
+        List<Account> accountList = accountRepo.findAll();
+        for(Account account : accountList){
+            if(account.getCredentials().getUsername().equals(username)){
+                return account.getId();
+            }
+        }
+
+        throw new RuntimeException("Wrong username");
+    }
+
+    @Override
+    public boolean checkPassword(UUID idToCheck, String password) {
+        return accountRepo.findById(idToCheck)
+                .get().getCredentials()
+                .getPassword().equals(password);
     }
 }
