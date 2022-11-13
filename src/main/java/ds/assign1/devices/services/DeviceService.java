@@ -22,9 +22,14 @@ public class DeviceService implements IDeviceService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceService.class);
 
     private final DevicesRepo devicesRepo;
+    private final DeviceValidators VALIDATOR;
 
     // Create
     public UUID addDevice(DeviceDTO dto){
+        VALIDATOR.hourlyConsumptionValidator(dto.getMaxHourlyConsumption());
+        VALIDATOR.descriptionValidator(dto.getDescription());
+        VALIDATOR.addressValidator(dto.getAddress());
+
         Device newDevice = DeviceBuilder.build(dto);
 
         newDevice = devicesRepo.save(newDevice);
@@ -52,7 +57,24 @@ public class DeviceService implements IDeviceService {
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToUpdate);
         });
 
-        devicesRepo.save(DeviceBuilder.build(idToUpdate, dto));
+        DeviceDTO updatedDevice = DeviceBuilder.build(updateDevice);
+
+        if(dto.getAddress().length() != 0){
+            VALIDATOR.addressValidator(dto.getAddress());
+            updatedDevice.setAddress(dto.getAddress());
+        }
+
+        if(dto.getDescription().length() != 0){
+            VALIDATOR.descriptionValidator(dto.getDescription());
+            updatedDevice.setDescription(dto.getDescription());
+        }
+
+        if(dto.getMaxHourlyConsumption() > 0){
+            VALIDATOR.hourlyConsumptionValidator(dto.getMaxHourlyConsumption());
+            updatedDevice.setMaxHourlyConsumption(dto.getMaxHourlyConsumption());
+        }
+
+        devicesRepo.save(DeviceBuilder.build(idToUpdate, updatedDevice));
         return dto;
     }
 
