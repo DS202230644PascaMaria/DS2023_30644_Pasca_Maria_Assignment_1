@@ -8,6 +8,7 @@ import ds.assign1.accounts.entities.Account;
 import ds.assign1.accounts.entities.Credentials;
 import ds.assign1.accounts.repos.AccountRepo;
 import ds.assign1.login.infrastructure.ILoginService;
+import ds.assign1.mapping.infrastructure.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService implements ILoginService {
+public class AccountService implements ILoginService, IAccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
     private final AccountRepo accountRepo;
 
@@ -113,5 +114,39 @@ public class AccountService implements ILoginService {
         return accountRepo.findById(idToCheck)
                 .get().getCredentials()
                 .getPassword().equals(password);
+    }
+
+
+    public List<UUID> getOwnedDevices(UUID accountId){
+        return accountRepo.findById(accountId).orElseThrow(() ->{
+            throw new RuntimeException("This account does not exist");
+        }).getDeviceList();
+    }
+
+    public void insertDevice(UUID accountId, UUID deviceId){
+        Account account = accountRepo.findById(accountId).orElseThrow(() -> {
+            throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + accountId);
+        });
+
+        AccountDTO dto = AccountBuilder.build(account);
+        List<UUID> deviceList = dto.getDeviceList();
+        deviceList.add(deviceId);
+        dto.setDeviceList(deviceList);
+
+        accountRepo.save(AccountBuilder.build(accountId, dto, account.getCredentials()));
+    }
+
+    public UUID removeDevice(UUID accountId, UUID deviceId){
+        Account account = accountRepo.findById(accountId).orElseThrow(() -> {
+            throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + accountId);
+        });
+
+        AccountDTO dto = AccountBuilder.build(account);
+        List<UUID> deviceList = dto.getDeviceList();
+        deviceList.remove(deviceId);
+        dto.setDeviceList(deviceList);
+
+        accountRepo.save(AccountBuilder.build(accountId, dto, account.getCredentials()));
+        return deviceId;
     }
 }

@@ -12,4 +12,5 @@ public class DeviceDTO {
     String description;
     String address;
     float maxHourlyConsumption;
+    UUID pairedAccountId;
 }
