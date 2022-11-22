@@ -12,6 +12,6 @@ import java.util.UUID;
 public class AccountDTO {
     UUID id;
     String name;
-    RoleType role;
+    String role;
     List<UUID> deviceList;
 }

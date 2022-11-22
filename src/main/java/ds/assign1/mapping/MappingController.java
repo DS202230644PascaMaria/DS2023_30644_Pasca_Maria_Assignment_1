@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/mapping")
 @RequiredArgsConstructor
 public class MappingController {
