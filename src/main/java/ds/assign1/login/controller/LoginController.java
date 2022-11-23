@@ -1,6 +1,7 @@
 package ds.assign1.login.controller;
 
 import ds.assign1.accounts.dtos.CredentialsDTO;
+import ds.assign1.login.LoginDTO;
 import ds.assign1.login.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ public class LoginController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void login(@RequestBody CredentialsDTO credentialsDTO){
-        SERVICE.login(credentialsDTO);
+    public LoginDTO login(@RequestBody CredentialsDTO credentialsDTO){
+        return SERVICE.login(credentialsDTO);
     }
 }

@@ -26,12 +26,12 @@ public class MappingController {
     }
 
     @PutMapping("/insert/{id}")
-    public void insertDevice(@PathVariable("id") UUID accountId, @RequestBody UUID deviceId){
-        SERVICE.insertDevice(accountId, deviceId);
+    public void insertDevice(@PathVariable("id") UUID accountId, @RequestBody MappingDTO dto){
+        SERVICE.insertDevice(accountId, dto.getDeviceId());
     }
 
     @PutMapping("/remove/{id}")
-    public void removeDevice(@PathVariable("id") UUID accountId, @RequestBody UUID deviceId){
-        SERVICE.removeDevice(accountId, deviceId);
+    public void removeDevice(@PathVariable("id") UUID accountId, @RequestBody MappingDTO mappingDTO){
+        SERVICE.removeDevice(accountId, mappingDTO.getDeviceId());
     }
 }

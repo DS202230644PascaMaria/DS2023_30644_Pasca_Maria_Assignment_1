@@ -2,10 +2,12 @@ package ds.assign1.accounts.services;
 
 import ds.assign1.accounts.dtos.AccountDTO;
 import ds.assign1.accounts.dtos.CredentialsDTO;
+import ds.assign1.accounts.dtos.ReturnAccountDTO;
 import ds.assign1.accounts.dtos.builders.AccountBuilder;
 import ds.assign1.accounts.dtos.builders.CredentialsBuilder;
 import ds.assign1.accounts.entities.Account;
 import ds.assign1.accounts.entities.Credentials;
+import ds.assign1.accounts.entities.RoleType;
 import ds.assign1.accounts.repos.AccountRepo;
 import ds.assign1.login.infrastructure.ILoginService;
 import ds.assign1.mapping.infrastructure.IAccountService;
@@ -35,19 +37,24 @@ public class AccountService implements ILoginService, IAccountService {
         return createdAccount.getId();
     }
 
+    public List<ReturnAccountDTO> getAccounts(){
+        List<Account> accountList = accountRepo.findAll();
+        return accountList.stream().map(AccountBuilder::buildReturn).collect(Collectors.toList());
+    }
+
     public List<AccountDTO> findAccounts(){
         List<Account> accountList = accountRepo.findAll();
         return accountList.stream().map(AccountBuilder::build).collect(Collectors.toList());
     }
 
-    public AccountDTO findAccountById(UUID idToSearch){
+    public ReturnAccountDTO findAccountById(UUID idToSearch){
         Optional<Account> foundAccount = accountRepo.findById(idToSearch);
         if(!foundAccount.isPresent()){
             LOGGER.error("There's no such account with id {}", idToSearch);
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToSearch);
         }
 
-        return AccountBuilder.build(foundAccount.get());
+        return AccountBuilder.buildReturn(foundAccount.get());
     }
 
     public UUID updateAccount(UUID idToUpdate, AccountDTO dto){
@@ -60,7 +67,7 @@ public class AccountService implements ILoginService, IAccountService {
                             updatedAccount.getName());
 
 
-        if(!dto.getName().isEmpty()){
+        if(dto.getName() != null && !dto.getName().isEmpty()){
             updatedAccount.setName(dto.getName());
         }
 
@@ -107,6 +114,11 @@ public class AccountService implements ILoginService, IAccountService {
         }
 
         throw new RuntimeException("Wrong username");
+    }
+
+    @Override
+    public String getRole(UUID id) {
+        return RoleType.toString(accountRepo.findById(id).get().getRole());
     }
 
     @Override

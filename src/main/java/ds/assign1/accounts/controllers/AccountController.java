@@ -3,6 +3,7 @@ package ds.assign1.accounts.controllers;
 import ds.assign1.accounts.dtos.AccountDTO;
 import ds.assign1.accounts.dtos.CreateAccountDTO;
 import ds.assign1.accounts.dtos.CredentialsDTO;
+import ds.assign1.accounts.dtos.ReturnAccountDTO;
 import ds.assign1.accounts.services.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,13 +21,13 @@ public class AccountController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public List<AccountDTO> getAllAccounts(){
-        return accountService.findAccounts();
+    public List<ReturnAccountDTO> getAllAccounts(){
+        return accountService.getAccounts();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    public AccountDTO getAccountById(@PathVariable("id") UUID idToSearch){
+    public ReturnAccountDTO getAccountById(@PathVariable("id") UUID idToSearch){
         return accountService.findAccountById(idToSearch);
     }
 
