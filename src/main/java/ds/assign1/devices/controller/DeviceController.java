@@ -1,6 +1,7 @@
 package ds.assign1.devices.controller;
 
 import ds.assign1.devices.dtos.DeviceDTO;
+import ds.assign1.devices.dtos.DeviceIdDTO;
 import ds.assign1.devices.services.DeviceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,8 @@ public class DeviceController {
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public UUID addDevices(@RequestBody DeviceDTO dto){
-        return deviceService.addDevice(dto);
+    public DeviceIdDTO addDevices(@RequestBody DeviceDTO dto){
+        return new DeviceIdDTO(deviceService.addDevice(dto));
     }
 
     @GetMapping("")
@@ -42,7 +43,7 @@ public class DeviceController {
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.GONE)
-    public UUID deleteDevice(@PathVariable("id") UUID id){
-        return deviceService.deleteDevice(id);
+    public DeviceIdDTO deleteDevice(@PathVariable("id") UUID id){
+        return new DeviceIdDTO(deviceService.deleteDevice(id));
     }
 }

@@ -1,9 +1,6 @@
 package ds.assign1.accounts.controllers;
 
-import ds.assign1.accounts.dtos.AccountDTO;
-import ds.assign1.accounts.dtos.CreateAccountDTO;
-import ds.assign1.accounts.dtos.CredentialsDTO;
-import ds.assign1.accounts.dtos.ReturnAccountDTO;
+import ds.assign1.accounts.dtos.*;
 import ds.assign1.accounts.services.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,25 +30,25 @@ public class AccountController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public UUID createAccount(@RequestBody CreateAccountDTO dto){
-        return accountService.createAccount(dto.getAccountDTO(), dto.getCredentialsDTO());
+    public AccountIdDTO createAccount(@RequestBody CreateAccountDTO dto){
+        return new AccountIdDTO(accountService.createAccount(dto.getAccountDTO(), dto.getCredentialsDTO()));
     }
 
     @PutMapping("/update_account/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public UUID updateAccount(@PathVariable("id") UUID idToUpdate, @RequestBody AccountDTO accountDTO){
-        return accountService.updateAccount(idToUpdate, accountDTO);
+    public AccountIdDTO updateAccount(@PathVariable("id") UUID idToUpdate, @RequestBody AccountDTO accountDTO){
+        return new AccountIdDTO(accountService.updateAccount(idToUpdate, accountDTO));
     }
 
     @PutMapping("/update_credentials/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public UUID updateCredentials(@PathVariable("id") UUID idToUpdate, @RequestBody CredentialsDTO credentialsDTO){
-        return accountService.updateCredentials(idToUpdate, credentialsDTO);
+    public AccountIdDTO updateCredentials(@PathVariable("id") UUID idToUpdate, @RequestBody CredentialsDTO credentialsDTO){
+        return new AccountIdDTO(accountService.updateCredentials(idToUpdate, credentialsDTO));
     }
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.GONE)
-    public UUID deleteAccount(@PathVariable("id") UUID idToDelete){
-        return accountService.deleteAccount(idToDelete);
+    public AccountIdDTO deleteAccount(@PathVariable("id") UUID idToDelete){
+        return new AccountIdDTO(accountService.deleteAccount(idToDelete));
     }
 }

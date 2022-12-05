@@ -14,8 +14,9 @@ public enum RoleType {
             case "Admin":
             case "ADMIN":
                 return ADMIN;
+            default: return CLIENT;
+
         }
-        throw new RuntimeException("This roletype does not exist: " + role);
     }
 
     public static String toString(RoleType role){
@@ -24,8 +25,8 @@ public enum RoleType {
                 return "client";
             case ADMIN:
                 return "admin";
+            default: return "CLIENT";
         }
 
-        throw new RuntimeException("RoleType not found: " + role);
     }
 }
