@@ -2,12 +2,13 @@ package ds.assign1.accounts.services;
 
 import ds.assign1.accounts.dtos.AccountDTO;
 import ds.assign1.accounts.dtos.CredentialsDTO;
+import ds.assign1.accounts.dtos.FullAccountDTO;
 import ds.assign1.accounts.dtos.ReturnAccountDTO;
 import ds.assign1.accounts.dtos.builders.AccountBuilder;
 import ds.assign1.accounts.dtos.builders.CredentialsBuilder;
+import ds.assign1.accounts.dtos.builders.FullAccountBuilder;
 import ds.assign1.accounts.entities.Account;
 import ds.assign1.accounts.entities.Credentials;
-import ds.assign1.accounts.entities.RoleType;
 import ds.assign1.accounts.repos.AccountRepo;
 import ds.assign1.login.infrastructure.ILoginService;
 import ds.assign1.mapping.infrastructure.IAccountService;
@@ -30,7 +31,7 @@ public class AccountService implements ILoginService, IAccountService {
 
     private final AccountValidators VALIDATORS;
 
-    public UUID createAccount(AccountDTO accountDTO, CredentialsDTO credentialsDTO){
+    public FullAccountDTO createAccount(AccountDTO accountDTO, CredentialsDTO credentialsDTO){
         VALIDATORS.usernameValidators(credentialsDTO.getUsername());
         VALIDATORS.passwordValidator(credentialsDTO.getPassword());
 
@@ -40,8 +41,7 @@ public class AccountService implements ILoginService, IAccountService {
 
         createdAccount = accountRepo.save(createdAccount);
 
-        LOGGER.debug("Account with id {} was created", createdAccount.getId());
-        return createdAccount.getId();
+        return FullAccountBuilder.build(createdAccount);
     }
 
     public List<ReturnAccountDTO> getAccounts(){
@@ -125,6 +125,11 @@ public class AccountService implements ILoginService, IAccountService {
         }
 
         throw new RuntimeException("Wrong username");
+    }
+
+    @Override
+    public String getRole(UUID id) {
+        return findAccountById(id).toString();
     }
 
     @Override
