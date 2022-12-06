@@ -1,8 +1,8 @@
 package ds.assign1.accounts.controllers;
 
 import ds.assign1.accounts.dtos.*;
-import ds.assign1.accounts.dtos.builders.FullAccountBuilder;
 import ds.assign1.accounts.services.AccountService;
+import ds.assign1.login.LoginDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +31,14 @@ public class AccountController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public FullAccountDTO createAccount(@RequestBody CreateAccountDTO dto){
-        return accountService.createAccount(dto.getAccountDTO(), dto.getCredentialsDTO());
+    public LoginDTO createAccount(@RequestBody CreateAccountDTO dto){
+        LoginDTO output =  accountService.createAccount(dto.getAccountDTO(), dto.getCredentialsDTO());
+        return output;
+    }
+
+    @GetMapping("full/{id}")
+    public FullAccountDTO getAllDetails(@PathVariable("id") UUID id){
+        return accountService.findAccountDetails(id);
     }
 
     @PutMapping("/update_account/{id}")

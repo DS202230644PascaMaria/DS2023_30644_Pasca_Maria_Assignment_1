@@ -28,7 +28,7 @@ public class DeviceService implements IDeviceService {
     public UUID addDevice(DeviceDTO dto){
         VALIDATOR.hourlyConsumptionValidator(dto.getMaxHourlyConsumption());
         VALIDATOR.descriptionValidator(dto.getDescription());
-        VALIDATOR.addressValidator(dto.getAddress());
+        //VALIDATOR.addressValidator(dto.getAddress());
 
         Device newDevice = DeviceBuilder.build(dto);
 
@@ -60,7 +60,7 @@ public class DeviceService implements IDeviceService {
         DeviceDTO updatedDevice = DeviceBuilder.build(updateDevice);
 
         if(dto.getAddress().length() != 0){
-            VALIDATOR.addressValidator(dto.getAddress());
+            //VALIDATOR.addressValidator(dto.getAddress());
             updatedDevice.setAddress(dto.getAddress());
         }
 

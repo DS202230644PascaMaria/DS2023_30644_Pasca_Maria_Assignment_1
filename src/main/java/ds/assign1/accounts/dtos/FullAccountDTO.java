@@ -11,5 +11,5 @@ public class FullAccountDTO {
     UUID id;
     String name;
     String role;
-    CredentialsDTO credentials;
+    CredentialsDTO dto;
 }
