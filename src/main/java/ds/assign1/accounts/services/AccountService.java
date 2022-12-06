@@ -2,13 +2,15 @@ package ds.assign1.accounts.services;
 
 import ds.assign1.accounts.dtos.AccountDTO;
 import ds.assign1.accounts.dtos.CredentialsDTO;
+import ds.assign1.accounts.dtos.FullAccountDTO;
 import ds.assign1.accounts.dtos.ReturnAccountDTO;
 import ds.assign1.accounts.dtos.builders.AccountBuilder;
 import ds.assign1.accounts.dtos.builders.CredentialsBuilder;
+import ds.assign1.accounts.dtos.builders.FullAccountBuilder;
 import ds.assign1.accounts.entities.Account;
 import ds.assign1.accounts.entities.Credentials;
-import ds.assign1.accounts.entities.RoleType;
 import ds.assign1.accounts.repos.AccountRepo;
+import ds.assign1.login.LoginDTO;
 import ds.assign1.login.infrastructure.ILoginService;
 import ds.assign1.mapping.infrastructure.IAccountService;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +30,19 @@ public class AccountService implements ILoginService, IAccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
     private final AccountRepo accountRepo;
 
-    public UUID createAccount(AccountDTO accountDTO, CredentialsDTO credentialsDTO){
+    private final AccountValidators VALIDATORS;
+
+    public LoginDTO createAccount(AccountDTO accountDTO, CredentialsDTO credentialsDTO){
+        VALIDATORS.usernameValidators(credentialsDTO.getUsername());
+        VALIDATORS.passwordValidator(credentialsDTO.getPassword());
+
+        VALIDATORS.nameValidator(accountDTO.getName());
+
         Account createdAccount = AccountBuilder.build(accountDTO, credentialsDTO);
 
         createdAccount = accountRepo.save(createdAccount);
 
-        LOGGER.debug("Account with id {} was created", createdAccount.getId());
-        return createdAccount.getId();
+        return new LoginDTO(createdAccount.getId(), createdAccount.getRole().toString());
     }
 
     public List<ReturnAccountDTO> getAccounts(){
@@ -57,6 +65,16 @@ public class AccountService implements ILoginService, IAccountService {
         return AccountBuilder.buildReturn(foundAccount.get());
     }
 
+    public FullAccountDTO findAccountDetails(UUID idToSearch){
+        Optional<Account> foundAccount = accountRepo.findById(idToSearch);
+        if(!foundAccount.isPresent()){
+            LOGGER.error("There's no such account with id {}", idToSearch);
+            throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToSearch);
+        }
+
+        return FullAccountBuilder.build(foundAccount.get());
+    }
+
     public UUID updateAccount(UUID idToUpdate, AccountDTO dto){
         Account account = accountRepo.findById(idToUpdate).orElseThrow(() -> {
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToUpdate);
@@ -66,12 +84,15 @@ public class AccountService implements ILoginService, IAccountService {
         System.out.println(updatedAccount.getId() + " " +
                             updatedAccount.getName());
 
+        VALIDATORS.nameValidator(dto.getName());
 
-        if(dto.getName() != null && !dto.getName().isEmpty()){
+        if(dto.getName().length() != 0){
             updatedAccount.setName(dto.getName());
         }
 
-        updatedAccount.setRole(dto.getRole());
+        if(dto.getRole() != null){
+            updatedAccount.setRole(dto.getRole());
+        }
 
         accountRepo.save(AccountBuilder.build(updatedAccount.getId(), updatedAccount, account.getCredentials()));
 
@@ -79,16 +100,17 @@ public class AccountService implements ILoginService, IAccountService {
     }
 
     public UUID updateCredentials(UUID idToUpdate, CredentialsDTO dto){
+        VALIDATORS.usernameValidators(dto.getUsername());
+        VALIDATORS.passwordValidator(dto.getPassword());
+
         Account account = accountRepo.findById(idToUpdate).orElseThrow(() -> {
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToUpdate);
         });
 
         AccountDTO updatedAccount = AccountBuilder.build(account);
-        System.out.println(updatedAccount.getId());
         Credentials updatedCredentials = CredentialsBuilder.build(dto);
 
         Account toSave = AccountBuilder.build(updatedAccount.getId(), updatedAccount, updatedCredentials);
-        System.out.println(toSave.getId());
         accountRepo.save(toSave);
 
         return updatedAccount.getId();
@@ -99,7 +121,12 @@ public class AccountService implements ILoginService, IAccountService {
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToDelete);
         });
 
-        accountRepo.delete(account);
+        if(account.getDeviceList() == null){
+            accountRepo.delete(account);
+        }
+        else{
+            throw new RuntimeException("The account has devices paired with it");
+        }
 
         return account.getId();
     }
@@ -118,7 +145,7 @@ public class AccountService implements ILoginService, IAccountService {
 
     @Override
     public String getRole(UUID id) {
-        return RoleType.toString(accountRepo.findById(id).get().getRole());
+        return findAccountById(id).getRole().toString();
     }
 
     @Override
