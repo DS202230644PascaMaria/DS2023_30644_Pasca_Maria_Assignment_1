@@ -121,10 +121,12 @@ public class AccountService implements ILoginService, IAccountService {
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + idToDelete);
         });
 
-        if(account.getDeviceList() == null){
+        if(account.getDeviceList().isEmpty()){
             accountRepo.delete(account);
         }
         else{
+            System.out.println(account.getDeviceList());
+
             throw new RuntimeException("The account has devices paired with it");
         }
 
