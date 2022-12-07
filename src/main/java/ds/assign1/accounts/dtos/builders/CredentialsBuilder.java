@@ -11,4 +11,8 @@ public class CredentialsBuilder {
     public static CredentialsDTO build(Credentials credentials){
         return new CredentialsDTO(credentials.getUsername(), credentials.getPassword());
     }
+
+    public static Credentials build(String username, String password){
+        return new Credentials(username, password);
+    }
 }
