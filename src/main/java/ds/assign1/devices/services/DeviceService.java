@@ -6,6 +6,7 @@ import ds.assign1.devices.dtos.builders.DeviceBuilder;
 import ds.assign1.devices.entities.Device;
 import ds.assign1.devices.repos.DevicesRepo;
 import ds.assign1.mapping.infrastructure.IDeviceService;
+import ds.assign1.messaging.infrastructure.IDeviceMeasurement;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DeviceService implements IDeviceService {
+public class DeviceService implements IDeviceService, IDeviceMeasurement {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceService.class);
 
     private final DevicesRepo devicesRepo;
@@ -92,5 +93,11 @@ public class DeviceService implements IDeviceService {
         return devicesRepo.findById(deviceId).orElseThrow(() -> {
             throw new ResourceNotFoundException(Account.class.getSimpleName() + " with id " + deviceId);
         }).getPairedAccountId();
+    }
+
+    public List<UUID> getDevicesId(){
+        List<Device> allDevices = devicesRepo.findAll();
+
+        return allDevices.stream().map(Device::getId).collect(Collectors.toList());
     }
 }
