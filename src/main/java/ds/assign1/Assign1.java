@@ -23,7 +23,7 @@ public class Assign1 extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws IOException, TimeoutException {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-        Consumer consumer = new Consumer();
+//        Consumer consumer = new Consumer();
         SpringApplication.run(Assign1.class, args);
     }
 }
