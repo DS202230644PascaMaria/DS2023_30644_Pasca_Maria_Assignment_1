@@ -1,47 +1,40 @@
 package ds.assign1.messaging.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ds.assign1.devices.dtos.DeviceDTO;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
 import ds.assign1.messaging.dtos.MeasurementDTO;
-import ds.assign1.messaging.entities.Measurement;
-import ds.assign1.messaging.infrastructure.IDeviceMeasurement;
-import ds.assign1.messaging.repos.IMeasurementRepo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeoutException;
 
 
 @Component
-@RequiredArgsConstructor
 public class Consumer {
-    private final IMeasurementRepo REPO;
-    private final IDeviceMeasurement DEVICES;
-    private Double sum = 0.0;
 
-    @RabbitListener(queues = {"${queue.name}"})
-    public void receive(@Payload String fileBody) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            MeasurementDTO dto = objectMapper.readValue(fileBody, MeasurementDTO.class);
-            System.out.println(dto.toString());
-            UUID deviceID = UUID.fromString(dto.getDevice_id());
-            Measurement measurement = new Measurement();
-            measurement.setTimestamp(dto.getTimestamp());
-            measurement.setDeviceId(deviceID);
-            measurement.setValue(dto.getMeasurement_value());
-            REPO.save(measurement);
-            DeviceDTO deviceDTO = DEVICES.findDeviceById(deviceID);
-            if(measurement.getValue() >= deviceDTO.getMaxHourlyConsumption()){
-                System.out.println("Value exceeded!");
-                return;
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public Consumer() throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("goose.rmq2.cloudamqp.com");
+        factory.setUsername("nddwoxcj");
+        factory.setVirtualHost("nddwoxcj");
+        factory.setPassword("es_KY9pmQ1EF7X3ZT-uukHFRtyBCDrkk");
+        factory.setConnectionTimeout(30000);
+        factory.setRequestedHeartbeat(30);
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+
+        channel.queueDeclare("measurements", false, false, false, null);
+
+        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+            String[] splitMsg = message.split(" ");
+            MeasurementDTO dto = new MeasurementDTO(Long.parseLong(splitMsg[0]), splitMsg[1], Double.parseDouble(splitMsg[2]));
+            System.out.println("Received '" + dto + "'");
+        };
+        channel.basicConsume("measurements", true, deliverCallback, consumerTag -> { });
     }
 
 }

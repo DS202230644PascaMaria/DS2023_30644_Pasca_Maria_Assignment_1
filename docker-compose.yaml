@@ -19,14 +19,6 @@ services:
       - "5432:5432"
     container_name: demo-db
 
-  rabbitmq:
-    image: rabbitmq:management
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    container_name: demo-rabbit
-
   backend:
     image: backend
     restart: always
@@ -34,7 +26,6 @@ services:
       - "8080:8080"
     environment:
       - DB_IP=demo-db
-      - RABBIT_IP=rabbitmq
       - DB_PORT=5432
       - DB_USER=root
       - DB_PASSWORD=password
