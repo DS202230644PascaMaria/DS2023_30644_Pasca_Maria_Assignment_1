@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   demo-db:
     image: postgres
 

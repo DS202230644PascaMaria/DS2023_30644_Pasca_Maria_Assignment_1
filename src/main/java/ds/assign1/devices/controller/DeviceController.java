@@ -46,4 +46,9 @@ public class DeviceController {
     public DeviceIdDTO deleteDevice(@PathVariable("id") UUID id){
         return new DeviceIdDTO(deviceService.deleteDevice(id));
     }
+
+    @GetMapping("/ids")
+    public List<UUID> getDevicesIds(){
+        return deviceService.getDevicesId();
+    }
 }
