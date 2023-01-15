@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.IOException;
 import java.util.TimeZone;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeoutException;
 @SpringBootApplication
 @Validated
 @EnableRabbit
+@CrossOrigin
 public class Assign1 extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -23,7 +25,6 @@ public class Assign1 extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws IOException, TimeoutException {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-//        Consumer consumer = new Consumer();
         SpringApplication.run(Assign1.class, args);
     }
 }

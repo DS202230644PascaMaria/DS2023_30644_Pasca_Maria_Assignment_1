@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+// 5596b281-97d2-4693-a41b-01076ee1f0f3 - johndoe
+// 11b860df-03ae-4a2c-86ab-2e0f731c75e4 - testAdmin
+
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor

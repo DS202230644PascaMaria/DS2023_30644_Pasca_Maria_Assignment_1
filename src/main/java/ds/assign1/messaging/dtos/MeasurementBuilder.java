@@ -12,4 +12,8 @@ public class MeasurementBuilder {
     public static MeasurementDTO build(Measurement entity){
         return new MeasurementDTO(entity.getTimestamp(), entity.getDeviceId().toString(), entity.getValue());
     }
+
+    public static OutputMeasurementDTO buildOutput(MeasurementDTO dto){
+        return new OutputMeasurementDTO(dto.getTimestamp(), dto.getMeasurement_value());
+    }
 }

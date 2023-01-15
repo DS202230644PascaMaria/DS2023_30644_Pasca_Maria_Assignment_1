@@ -6,6 +6,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import ds.assign1.messaging.dtos.MeasurementDTO;
 import ds.assign1.messaging.repos.IMeasurementRepo;
+import ds.assign1.websockets.WebsocketController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class Consumer {
         factory.setHost("goose.rmq2.cloudamqp.com");
         factory.setUsername("nddwoxcj");
         factory.setVirtualHost("nddwoxcj");
-        factory.setPassword("es_KY9pmQ1EF7X3ZT-uukHFRtyBCDrkk");
+        factory.setPassword("bsBvjPB5_PsLGLbIJLTTDEVgs1hNhWIz");
         factory.setConnectionTimeout(30000);
         factory.setRequestedHeartbeat(30);
         Connection connection = factory.newConnection();
@@ -37,7 +38,7 @@ public class Consumer {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             String[] splitMsg = message.split(" ");
             MeasurementDTO dto = new MeasurementDTO(Long.parseLong(splitMsg[0]), splitMsg[1], Double.parseDouble(splitMsg[2]));
-            //System.out.println("Received '" + dto + "'");
+            System.out.println("Received '" + dto + "'");
             SERVICE.addMeasurement(dto);
             SERVICE.checkMaxConsumption(UUID.fromString(dto.getDevice_id()));
             //System.out.println(SERVICE.getLastHourMeasures(UUID.fromString(dto.getDevice_id())));
